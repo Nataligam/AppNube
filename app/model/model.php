@@ -4,7 +4,7 @@ class Model {
     private $connection;
 
     public function connect(){
-        $server="localhost";
+        $server="35.231.24.235";
         $user="root";
         $pass="";
         $bd="gestion_riesgo";
