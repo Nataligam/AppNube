@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <title>{{TITULO}}</title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="public/images/favicon.ico" />
+  <link rel="stylesheet" href="public/css/bootstrap.css">
+  <link rel="stylesheet" href="public/css/font-awesome.min.css">
+  <link rel="stylesheet" href="public/css/custom.css">
+  <link rel="stylesheet" href="public/css/global.css">
+  <link rel="stylesheet" href="public/css/x0popup.css">
+  <link rel="stylesheet" href="public/css/x0popup.default.css">
+  <link rel="stylesheet" href="public/css/bootstrap-datepicker.min.css" />
+  <link rel="stylesheet" href="public/css/chosen.css" />
+  <link rel="stylesheet" href="public/css/checkbox.css" />
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="public/js/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="public/js/bootstrap.min.js"></script>
+  <!-- js para paginacion-->
+  <script src="public/js/js-pagination.js"></script>
+  <!-- js para popup animados-->
+  <script src="public/js/x0popup.js"></script>
+  <!-- js para fechas con datepicker-->
+  <script src="public/js/bootstrap-datepicker.min.js"></script>
+  <!-- js para select con buscador-->
+  <script src="public/js/chosen.jquery.js"></script>
+
+</head>
+
+<body>
+  <nav class="navbar navbar-default ">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
+          aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+        <a class="navbar-brand" href="index.php">Sistema Gestión De Riesgo</a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li id="nav_proyectos"><a href="index.php?mode=proyectos"><i class='glyphicon glyphicon-list-alt'></i> Proyectos<span class="sr-only"></span></a></li>
+        
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="index.php?mode=cerrar-sesion"><i class='glyphicon glyphicon-off'></i> Salir</a></li>
+        </ul>
+      </div>
+      <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container-fluid -->
+  </nav>
+
+  <div class="container">
+
+    {{CONTENIDO}}
+
+  </div>
+  <hr>
+  <div class="navbar navbar-default navbar-fixed-bottom">
+    <div class="container">
+      <p class="navbar-text pull-left">&copy 2017 - Omar Contreras-1151226/ Ender Ortega-1151211/ Gabriel Contreras-1151220.
+      </p>
+    </div>
+  </div>
+</body>
+
+</html>

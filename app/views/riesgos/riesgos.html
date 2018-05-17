@@ -1,0 +1,585 @@
+<div class="panel panel-info">
+	<div class="panel-heading">
+
+		<h4 class="text-center">Identificación De Riesgos <i class='glyphicon glyphicon-search'></i> </h4>
+
+	</div>
+	<!-- Modal Registro -->
+	<div class="modal fade" id="nuevoRiesgo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" onclick="borrarMsj()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel"><i class='glyphicon glyphicon-edit'></i> Registrar riesgos al proyecto</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" id="registrar-riesgo">
+
+						<!-- introduciomos la ruta hacia donde se va procesar el ajax-->
+						<input type="hidden" name="mode" value="registrar-riesgo">
+						<input type="hidden" name="id_proyecto" id="id_proyecto" value="{{ID_PROYECTO}}">
+
+						<div class="form-group">
+							<label class="col-md-4 control-label">Riesgo</label>
+							<div class="col-md-8">
+								<textarea class="form-control text" name="riesgo" placeholder="Describa el riesgo"></textarea>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-md-4 control-label">CAUSAS (factores internos y externos, agente generador)</label>
+							<div class="col-md-8">
+								<textarea class="form-control text" name="causas" placeholder="Enumere las causas"></textarea>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-4 control-label">EFECTOS (consecuencias)</label>
+							<div class="col-md-8">
+								<textarea class="form-control text" name="efectos" placeholder="Enumere los efectos"></textarea>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-4 control-label">Como impacta el riesgo al cronograma</label>
+							<div class="col-md-8">
+								<textarea class="form-control text" name="como_impacta" placeholder="Describa el impacto"></textarea>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-4 control-label">Probabilidad <a tabindex="0" class="badge bg-gray-gradient" data-toggle="popover" data-trigger="focus" title="" data-content='<table><tr></tr><tr><td colspan="2"><strong>Criterio de probabilidad<strong></td></tr><tr><td>Casi Certeza</td><td>5</td></tr><tr><td>Probable</td><td>4</td></tr><tr><td>Moderada</td><td>3</td></tr><tr><td>Improbable</td><td>2</td></tr><tr><td>Raro</td><td>1</td></tr></table>' data-placement="rigth" data-html="true" data-original-title="Probabilidad">
+									<i class="fa fa-question-circle"></i>
+								</a></label>
+							<div class="col-md-8">
+								<input type="number" name="probabilidad" class="form-control text" min="1" max="5">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-4 control-label">Impacto  <a tabindex="0" class="badge bg-gray-gradient" data-toggle="popover" data-trigger="focus" title="" data-content='<table><tr></tr><tr><td colspan="2"><strong>Criterio de impacto<strong></td></tr><tr><td>Catastrofico</td><td>5</td></tr><tr><td>Mayor</td><td>4</td></tr><tr><td>Moderado</td><td>3</td></tr><tr><td>Menor</td><td>2</td></tr><tr><td>Insignificante</td><td>1</td></tr></table>' data-placement="rigth" data-html="true" data-original-title="Impacto">
+									<i class="fa fa-question-circle"></i>
+								</a></label>
+							<div class="col-md-8">
+								<input type="number" name="impacto" class="form-control text" min="1" max="5">
+							</div>
+						</div>
+
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" onclick="borrarMsj()" data-dismiss="modal">Cerrar</button>
+							<button type="submit" onclick="cargarRiesgosCompletos()" class="btn btn-primary">Registrar Riesgo</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Model actualizar-->
+	<div class="modal fade" id="actualizarRiesgo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" onclick="borrarMsj()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel"><i class='glyphicon glyphicon-edit'></i> Respuesta A Riesgos</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" id="registrar-respuesta-riesgo">
+
+						<!-- introduciomos la ruta hacia donde se va procesar el ajax-->
+						<input type="hidden" name="mode" value="registrar-respuesta-riesgo">
+						<input type="hidden" name="id_proyecto" id="id-proyecto" value="{{ID_PROYECTO}}">
+						<input type="hidden" name="id_riesgo" id="id-riesgo" value="">
+
+						<div class="form-group">
+							<label class="col-md-4 control-label">Acciones <a tabindex="0" class="badge bg-gray-gradient" data-toggle="popover" data-trigger="focus" title="" data-content='Es la aplicación concreta de las opciones de manejo del riesgo que entrarán a prevenir o a reducir el riesgo y harán parte del plan de manejo del riesgo, se debe indicar si la acción está orientada a mitigar/transferir/aceptar el riesgo.' data-placement="rigth" data-original-title="Acciones"><i class="fa fa-question-circle"></i></a></label>
+							<div class="col-md-8">
+								<textarea id="input-acciones" class="form-control text" name="acciones" placeholder="Describa las acciones"></textarea>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-md-4 control-label">Responsable <a tabindex="0" class="badge bg-gray-gradient" data-toggle="popover" data-trigger="focus" title="" data-content='Encargados dentro del proyecto de adelantar las acciones propuestas.' data-placement="rigth" data-original-title="Responsable"><i class="fa fa-question-circle"></i></a></label>
+							<div class="col-md-8">
+								<textarea id="input-responsable" class="form-control text" name="responsable" placeholder="Describa los responsables"></textarea>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-4 control-label">Cronograma  <a tabindex="0" class="badge bg-gray-gradient" data-toggle="popover" data-trigger="focus" title="" data-content='son las fechas establecidas para implementar las acciones por parte del grupo de trabajo.' data-placement="rigth" data-original-title="Cronograma"><i class="fa fa-question-circle"></i></a></label>
+							<div class="col-md-8">
+								<textarea class="form-control text" id="input-cronograma" name="cronograma" placeholder="Describa el cronograma"></textarea>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-4 control-label">Indicador <a tabindex="0" class="badge bg-gray-gradient" data-toggle="popover" data-trigger="focus" title="" data-content='Se consignan los indicadores diseñados para evaluar el desarrollo de las acciones implementadas.' data-placement="rigth" data-original-title="Indicador"><i class="fa fa-question-circle"></i></a></label>
+							<div class="col-md-8">
+								<textarea class="form-control text" id="input-indicador" name="indicador" placeholder="Describa el indicador"></textarea>
+							</div>
+						</div>
+
+
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" onclick="borrarMsj()" data-dismiss="modal">Cerrar</button>
+							<button type="submit" onclick="cargarRiesgosCompletos()" class="btn btn-primary">Registrar respuesta a riesgos</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+<div class="panel with-nav-tabs panel-info">
+	<div class="panel-heading">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="#registrarRiesgo" data-toggle="tab">Registrar riesgos</a></li>
+			<li><a href="#analisisRiesgo" data-toggle="tab">Analisis y clasificación de riesgos del proyecto</a></li>
+			<li><a href="#respuestaRiesgo" data-toggle="tab">Respuesta a riesgos</a></li>
+		</ul>
+	</div>
+	<div class="panel-body">
+		<div class="tab-content">
+			<div class="tab-pane fade in active" id="registrarRiesgo">
+
+				<div class="panel-body">
+					<div class="form-group row">
+						<!-- aquí va el msj de error o exito en el proceso de registro-->
+						<div id="resultado_ajax"></div>
+
+					</div>
+					<div class="form-group">
+						<label class="col-md-2 control-label">Nombre Del Proyecto: </label>
+						<div class="col-md-10">
+							<p>{{NOMBRE_PROYECTO}}</p>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-md-2 control-label">Gerente Del Proyecto: </label>
+						<div class="col-md-10">
+							<p>{{GERENTE}}</p>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-md-2 control-label">Fecha De Registro: </label>
+						<div class="col-md-10">
+							<p>{{FECHA_REGISTRO}}</p><br><br>
+						</div>
+					</div>
+
+
+					<div class="tablas" id='tabla-riesgo'>
+						<!-- Carga los datos ajax -->
+						<div style="padding-bottom:20px" class="btn-group pull-right">
+							<a href="#" class="btn btn-info" data-toggle="modal" data-target="#nuevoRiesgo"><span class="glyphicon glyphicon-plus" ></span> Nuevo Riesgo</a>
+						</div>
+						<table class="table table-bordered">
+							<thead>
+								<th class="text-center info">CODIGO</th>
+								<th class="text-center info">RIESGO</th>
+								<th class="text-center info">CAUSAS(factores internos y externos, agente generador)</th>
+								<th class="text-center info">EFECTOS(consecuencias)</th>
+								<th class="text-center info">Como impacta el riesgo al cronograma</th>
+								<th class="text-center info"></th>
+							</thead>
+							<tbody id="datos-tabla-riesgos-completos">
+
+							</tbody>
+						</table>
+					</div>
+
+				</div>
+			</div>
+			<div class="tab-pane fade" id="respuestaRiesgo">
+				<div class="form-group row">
+					<!-- aquí va el msj de error o exito en el proceso de registro-->
+					<div id="resultado_ajax_respuesta"></div>
+
+				</div>
+				<div class="form-group">
+					<label class="col-md-2 control-label">Nombre Del Proyecto: </label>
+					<div class="col-md-10">
+						<p>{{NOMBRE_PROYECTO}}</p>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-2 control-label">Gerente Del Proyecto: </label>
+					<div class="col-md-10">
+						<p>{{GERENTE}}</p>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-2 control-label">Fecha De Registro: </label>
+					<div class="col-md-10">
+						<p>{{FECHA_REGISTRO}}</p><br><br>
+					</div>
+				</div>
+
+				<div class="tablas" id='tabla-respuesta'>
+					<!-- Carga los datos ajax -->
+					<table class="table table-bordered">
+						<thead>
+							<th class="text-center info">CODIGO</th>
+							<th class="text-center info">RIESGO</th>
+							<th class="text-center info">TOTAL</th>
+							<th class="text-center info">ACCIONES</th>
+							<th class="text-center info">RESPONSABLE</th>
+							<th class="text-center info">CRONOGRAMA</th>
+							<th class="text-center info">INDICADOR</th>
+							<th class="text-center info"></th>
+						</thead>
+						<tbody id="datos-tabla-respuesta">
+
+						</tbody>
+					</table>
+				</div>
+				<div style="padding-bottom:20px" class="btn-group pull-right">
+					<div class="tablas">
+						<table class="table table-bordered">
+							<tr>
+								<th>Clasificación del riesgo</th>
+								<th>Rango PXI (probabilidad x impacto)</th>
+							</tr>
+							<tr>
+								<td><b><label class="btn btn-success">Riesgo bajo<input type="checkbox" checked="" class="badgebox" id="color-5cb85c"><span class="badge">✓</span></label></b></td>
+								<td>(1-4)</td>
+							</tr>
+							<tr>
+								<td><b><label class="btn btn-warning">Riesgo moderado<input type="checkbox" checked="" class="badgebox" id="color-f0ad4e"><span class="badge">✓</span></label></b></td>
+								<td>(5-11)</td>
+							</tr>
+							<tr>
+								<td><b><label class="btn btn-danger">Riesgo alto<input type="checkbox" checked="" class="badgebox" id="color-d9534f"><span class="badge">✓</span></label></b></td>
+								<td>(12-25)</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="analisisRiesgo">
+				<div class="form-group row">
+
+
+				</div>
+				<div class="form-group">
+					<label class="col-md-2 control-label">Nombre Del Proyecto: </label>
+					<div class="col-md-10">
+						<p>{{NOMBRE_PROYECTO}}</p>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-2 control-label">Gerente Del Proyecto: </label>
+					<div class="col-md-10">
+						<p>{{GERENTE}}</p>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-2 control-label">Fecha De Registro: </label>
+					<div class="col-md-10">
+						<p>{{FECHA_REGISTRO}}</p><br><br>
+					</div>
+				</div>
+				<div class="tablas" id='tabla-riesgo'>
+					<!-- Carga los datos ajax -->
+					<table class="table table-bordered">
+						<thead>
+							<th class="text-center info">CODIGO</th>
+							<th class="text-center info">RIESGO</th>
+							<th class="text-center info">PROBABILIDAD</th>
+							<th class="text-center info">IMPACTO</th>
+							<th class="text-center info">TOTAL</th>
+						</thead>
+						<tbody id="datos-tabla-riesgos">
+
+						</tbody>
+					</table>
+				</div>
+				<div style="padding-bottom:20px" class="btn-group pull-right">
+					<div class="tablas">
+						<table class="table table-bordered">
+							<tr>
+								<th>Clasificación del riesgo</th>
+								<th>Rango PXI (probabilidad x impacto)</th>
+							</tr>
+							<tr>
+								<td><b><label class="btn btn-success">Riesgo bajo<input type="checkbox" checked="" class="badgebox" id="color-5cb85c"><span class="badge">✓</span></label></b></td>
+								<td>(1-4)</td>
+							</tr>
+							<tr>
+								<td><b><label class="btn btn-warning">Riesgo moderado<input type="checkbox" checked="" class="badgebox" id="color-f0ad4e"><span class="badge">✓</span></label></b></td>
+								<td>(5-11)</td>
+							</tr>
+							<tr>
+								<td><b><label class="btn btn-danger">Riesgo alto<input type="checkbox" checked="" class="badgebox" id="color-d9534f"><span class="badge">✓</span></label></b></td>
+								<td>(12-25)</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	//obtenemos el id del proyecto
+	var idProyecto = $('#id_proyecto').val();
+	//array con todos los riesgos
+	var arrayRiesgo=null;
+	//esperemos a que la pagina este completamente cargada para cargar los eventos
+	$(document).ready(function () {
+		//activamos el popover
+		$('[data-toggle="popover"]').popover();
+		//agregamos la clase active al nav actual de la pagina web
+		$("#nav_proyectos").attr("class", "active");
+		cargarEventos();
+		cargarRiesgosCompletos();
+
+		function cargarEventos() {
+			//metodo que agrega un evento al formulario registrar-riesgo
+			$("#registrar-riesgo").on("submit", function (e) {
+				//previene que se envien los datos por la url
+				e.preventDefault();
+				var datos = new FormData(this);
+				//var con la url del archivo php
+				var url = "index.php";
+				//llama a la funcion ajax
+				registrarRiesgos(datos, url);
+			});
+
+			//metodo que agrega un evento al formulario registrar-respuesta-riesgo 
+			$("#registrar-respuesta-riesgo").on("submit", function (e) {
+				//previene que se envien los datos por la url
+				e.preventDefault();
+				var datos = new FormData(this);
+				//var con la url del archivo php
+				var url = "index.php";
+				//llama a la funcion ajax
+				registrarRespuestaRiesgo(datos, url);
+			});
+
+			//metodo que agregar eventos a los checkbox
+			$(".badgebox").click(function () {
+				var seleccionado = $(this).prop('checked');
+				var id = $(this).attr("id");
+				if (seleccionado) {
+					$(".text-center." + id).each(function () {
+						$(this).show();
+					});
+				} else {
+					$(".text-center." + id).each(function () {
+						$(this).hide();
+					});
+				}
+			});
+
+		}
+
+		//funcion para registrar cliente
+		function registrarRiesgos(datos, url1) {
+			$.ajax({
+				data: datos,
+				url: url1,
+				type: 'POST',
+				processData: false,
+				contentType: false,
+				//esta funncion se ejecuta cuando el php a terminado de procesar
+				//con el resultado e inserta el resultado en algun elemento html
+				success: function (response) {
+					if (response) {
+						var html = '<div class="alert alert-success" role="alert"><button type="button" class="close" data-dismiss="alert">×</button><strong>¡Bien hecho!</strong> Se ha registrado el riesgo satisfactoriamente al proyecto.</div>';
+					} else {
+						var html = '<div class="alert alert-danger" role="alert"><button type="button" class="close" data-dismiss="alert">×</button><strong>Error!</strong> Se produjo un error al registrar el riesgo en el proyecto, intente más tarde.</div>';
+					}
+					$("#resultado_ajax").html(html);
+					borrarCampos();
+					//ir hacia arriba en el scrollTop
+					$('html, body').animate({ scrollTop: 0 }, 'slow');
+					//cerramos el modal
+					$('#nuevoRiesgo').modal('toggle');
+					//cargamos la tabla de riesgos completos
+					cargarRiesgosCompletos();
+				}
+			});
+
+		}
+
+	});
+
+
+
+
+	function cargarRiesgosCompletos() {
+		$("#datos-tabla-proyecto").empty();
+		var datos = {
+			"mode": "cargar-riesgos",
+			"id_proyecto": idProyecto
+
+		};
+		$.ajax({
+			data: datos,
+			url: "index.php",
+			type: 'POST',
+			beforeSend: function () {
+
+			},
+			success: function (response) {
+				var html = "";
+			    arrayRiesgo = JSON.parse(response);
+				var cont = 0;
+				arrayRiesgo.forEach(function (element) {
+					cont++;
+					html += "<tr><td  class='text-center'>R" + cont + "</td><td>" + element["riesgo"] + "</td><td>" + element["causas"] + "</td><td>" + element["efectos"] + "</td><td>" + element["como_impacta"] + "</td><td  class='text-center' width='5%' ><span> <a href='#' class='btn btn-default' onclick='borrarRiesgo(" + element["id_riesgo"] + ")'><i class='glyphicon glyphicon-trash'></i> </a></span></td></tr>";
+				}, this);
+				$("#datos-tabla-riesgos-completos").html(html);
+				//cargamos la tabla analisis y clasificacion de riesgos
+				cargarRiesgos(arrayRiesgo);
+				//cargarmos la tabla respuesta de riesgos
+				cargarRespuestas(arrayRiesgo);
+			},
+			error: function (xhr, status, error) {
+			}
+		});
+		$("#loader-ajax").html("");
+	}
+
+	function cargarRiesgos(array) {
+		var html = "";
+		var cont = 0;
+
+		array.forEach(function (element) {
+			var color = "";
+			if (element["total"] <= 4) {
+				color = "5cb85c";
+			} else if (element["total"] >= 5 && element["total"] <= 11) {
+				color = "f0ad4e";
+			} else {
+				color = "d9534f";
+			}
+
+			cont++;
+			html += "<tr class='text-center color-" + color + "'><td  class='text-center'>R" + cont + "</td><td>" + element["riesgo"] + "</td><td class='text-center'>" + element["probabilidad"] + "</td><td class='text-center'>" + element["impacto"] + "</td><td class='text-center' bgcolor='#" + color + "'><b>" + element["total"] + "</b></td></tr>";
+		}, this);
+
+		$("#datos-tabla-riesgos").html(html);
+	}
+
+	function cargarRespuestas(array) {
+		var html = "";
+		var cont = 0;
+
+		array.forEach(function (element) {
+			var color = "";
+			if (element["total"] <= 4) {
+				color = "5cb85c";
+			} else if (element["total"] >= 5 && element["total"] <= 11) {
+				color = "f0ad4e";
+			} else {
+				color = "d9534f";
+			}
+
+			cont++;
+			html += "<tr class='text-center color-" + color + "'><td  class='text-center'>R" + cont + "</td><td>" + element["riesgo"] + "</td><td class='text-center' bgcolor='#" + color + "'><b>" + element["total"] + "</b></td><td>" + element["acciones"] + "</td><td>" + element["responsable"] + "</td><td>" + element["cronograma"] + "</td><td>" + element["indicador"] + "</td><td width='5%'><a onclick='actualizarInfoRiesgo("+element["id_riesgo"]+")' class='btn btn-default'><i class='glyphicon glyphicon-edit'></i></a></td></tr>";
+		}, this);
+
+		$("#datos-tabla-respuesta").html(html);
+	}
+
+	function actualizarInfoRiesgo(idRiesgo) {
+		$('#actualizarRiesgo').modal('show');
+		//actualizamos el value de hidden de idRiesgo
+		$("#id-riesgo").val(idRiesgo);
+		//cargamos la informacion del riesgo
+		var riesgo=buscarRiesgo(idRiesgo);
+		//llenamos los textarea
+		$("#input-acciones").val(riesgo['acciones']);
+		$("#input-responsable").val(riesgo['responsable']);
+		$("#input-cronograma").val(riesgo['cronograma']);
+		$("#input-indicador").val(riesgo['indicador']);
+	}
+
+	function registrarRespuestaRiesgo(datos, url1){
+		$.ajax({
+				data: datos,
+				url: url1,
+				type: 'POST',
+				processData: false,
+				contentType: false,
+				//esta funncion se ejecuta cuando el php a terminado de procesar
+				//con el resultado e inserta el resultado en algun elemento html
+				success: function (response) {
+					console.log(response);
+					if (response) {
+						var html = '<div class="alert alert-success" role="alert"><button type="button" class="close" data-dismiss="alert">×</button><strong>¡Bien hecho!</strong> Se ha actualizado satisfactoriamente el riesgo del proyecto.</div>';
+					} else {
+						var html = '<div class="alert alert-danger" role="alert"><button type="button" class="close" data-dismiss="alert">×</button><strong>Error!</strong> Se produjo un error al actualizar el riesgo del proyecto , intente más tarde.</div>';
+					}
+					$("#resultado_ajax_respuesta").html(html);
+					borrarCampos();
+					//ir hacia arriba en el scrollTop
+					$('html, body').animate({ scrollTop: 0 }, 'slow');
+					//cerramos el modal
+					$('#actualizarRiesgo').modal('toggle');
+					//cargamos la tabla de riesgos completos
+					cargarRiesgosCompletos();
+				}
+			});
+	}
+
+	function buscarRiesgo(idRiesgo){
+		var riesgo=null;
+		arrayRiesgo.forEach(function(element){
+			if(element['id_riesgo']==idRiesgo){
+				riesgo=element;
+			}
+		},this);
+
+		return riesgo;
+	}
+
+
+
+	function borrarMsj() {
+		$("#resultado_ajax").html("");
+	}
+
+	function borrarCampos() {
+		$(".form-control.text").each(function () {
+			$(this).val("");
+		});
+	}
+
+	function borrarRiesgo(id_riesgo) {
+		x0p('', '¿Desea borrar el riesgo?', 'warning', function (resul) {
+			if ("cancel" != resul) {
+				var datos = {
+					"mode": "borrar-riesgo",
+					"id_proyecto": idProyecto,
+					"id_riesgo": id_riesgo
+				};
+				$.ajax({
+					data: datos,
+					url: "index.php",
+					type: 'POST',
+					success: function (response) {
+						if (response == 1) {
+							x0p('Exito!',
+								'El riesgo se ha eliminado satisfactoriamente.',
+								'ok', false);
+							cargarRiesgosCompletos();
+						} else {
+							x0p('Error!',
+								'No se puede eliminar el riesgo.',
+								'error', false);
+						}
+					},
+					error: function (xhr, status, error) {
+						x0p('Error!',
+							'Se ha producido un error en la aplicación por favor intelo más tarde.',
+							'error', false);
+					}
+				});
+			}
+
+		});
+
+	}
+</script>

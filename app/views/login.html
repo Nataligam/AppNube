@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+  <link rel="shortcut icon" type="image/x-icon" href="public/images/favicon.ico" />
+  <title>Iniciar Sesión</title>
+	<!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="public/css/bootstrap.css">
+   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="public/js/jquery.min.js"></script>
+  <!-- CSS  -->
+   <link href="public/css/login.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+</head>
+<body>
+ <div class="container">
+        <div class="card card-container">
+            <h3 style="text-align: center;">Sistema Gestión De Riesgo</h3>
+            <img id="profile-img" class="profile-img-card" src="public/images/avatar.png" />  
+            <form  id="iniciar-sesion" autocomplete="off" role="form" class="form-signin">
+              <input type="hidden" name="mode" value="login">
+              <span id="reauth-email" class="reauth-email"></span>
+                <div class="alert alert-danger alert-dismissible" id="alert-login" style="display: none;" role="alert">
+						    <strong>Error!</strong>Usuario y/o contraseña no coinciden.</div>
+                <input class="form-control" placeholder="Usuario" name="username" type="text" value="" autofocus="" required>
+                <input class="form-control" placeholder="Contraseña" name="password" type="password" value="" autocomplete="off" required>
+                <button type="submit" class="btn btn-lg btn-success btn-block btn-signin">Iniciar Sesión</button>
+            </form><!-- /form -->
+            
+        </div><!-- /card-container -->
+    </div><!-- /container -->
+    <!-- Aqui va el js de cada una de las paginas del aplicativo-->
+    <script>
+	$(document).ready(function () {
+
+		cargarEventos();
+
+		function cargarEventos() {
+			//funcion para agregar el ajax al submit del formulario
+			$("#iniciar-sesion").on("submit", function (e) {
+				//previene que se envien los datos por la url
+				e.preventDefault();
+				var datos = new FormData(this);
+				//var con la url del archivo php
+				var url = "index.php";
+				//llama a la funcion ajax
+				iniciarSesion(datos, url);
+			});
+		}
+
+        function borrarCampos(){
+            $(".form-control").each(function(){
+                $(this).val("");
+            });
+        }
+
+		//funcion para iniciar sesion
+		function iniciarSesion(datos, url1) {
+			$.ajax({
+				data: datos,
+				url: url1,
+				type: 'POST',
+				processData: false,
+				contentType: false,
+				//esta funncion se ejecuta cuando el php a terminado de procesar
+				//con el resultado e inserta el resultado en algun elemento html
+				success: function (response) {
+                    if(response){
+                    window.location="index.php";
+                    }else{
+                      $("#alert-login").show();
+                      borrarCampos();
+                      //ir hacia arriba en el scrollTop
+                      $('html, body').animate({scrollTop:0}, 'slow')
+                    }
+				}
+			});
+    }
+
+	});
+
+</script>
+  </body>
+</html>

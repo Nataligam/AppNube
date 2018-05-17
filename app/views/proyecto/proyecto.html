@@ -1,0 +1,248 @@
+<div class="panel panel-info">
+	<div class="panel-heading">
+		<div class="btn-group pull-right">
+			<a href="#" class="btn btn-info" data-toggle="modal" data-target="#nuevoProyecto"><span class="glyphicon glyphicon-plus" ></span> Nuevo Proyecto</a>
+		</div>
+		<h4><i class='glyphicon glyphicon-search'></i> Buscar Proyectos</h4>
+			
+	</div>
+	<!-- Modal Registro -->
+	<div class="modal fade" id="nuevoProyecto" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" onclick="borrarMsj()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel"><i class='glyphicon glyphicon-edit'></i> Registrar nuevos proyectos</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" id="registrar-proyecto">
+					
+						<!-- introduciomos la ruta hacia donde se va procesar el ajax-->
+						<input type="hidden" name="mode" value="registrar-proyecto">
+
+						<div class="form-group">
+							<label class="col-sm-4 control-label">Nombre del proyecto</label>
+							<div class="col-sm-8">
+								<input type="text" class="form-control text" name="nombre-proyecto">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-4 control-label">Gerente del proyecto</label>
+							<div class="col-sm-8">
+								<input type="text" class="form-control text" name="gerente-proyecto">
+							</div>
+						</div>	
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" onclick="borrarMsj()" data-dismiss="modal">Cerrar</button>
+							<button type="submit" onclick="buscarProyecto()" class="btn btn-primary">Registrar Proyecto</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="panel-body">
+		<form class="form-horizontal" role="form">
+
+			<div class="form-group row">
+				<!-- aquí va el msj de error o exito en el proceso de registro-->
+			<div id="resultado_ajax"></div>
+				<label  class="col-md-2 control-label">Nombre del proyecto</label>
+				<div class="col-md-5">
+					<input type="text" class="form-control" id="input-buscar" placeholder="Ingrese el nombre del proyecto" onkeyup='buscarProyecto()'>
+				</div>
+
+				<div class="col-md-3">
+					<button type="button" class="btn btn-default" onclick='buscarProyecto()'>
+									<span class="glyphicon glyphicon-search" ></span> Buscar</button>
+				<!-- se carga el gif animado cuando se carguen los datos de la base de datos-->
+					<span id="loader-ajax"></span>
+				</div>
+
+			</div>
+		</form>
+
+		<div id="resultados"></div>
+		<!-- Carga los datos ajax -->
+		<div class="tablas" id='tabla-proyecto'></div>
+		<!-- Carga los datos ajax -->
+	</div>
+</div>
+
+<script>
+	//cargamos el modelo de la tabla cliente
+	var htmlTabla = "";
+	jQuery.get('./app/views/proyecto/components/tabla-proyecto.html', function (data) {
+		htmlTabla = data;
+	});
+	var stringBusqueda = "";
+	//esperemos a que la pagina este completamente cargada para cargar los eventos
+	$(document).ready(function () {
+		//agregamos la clase active al nav actual de la pagina web
+		$("#nav_proyectos").attr("class", "active");
+		cargarEventos();
+		buscarProyecto();
+
+		function cargarEventos() {
+			$("#registrar-proyecto").on("submit", function (e) {
+				//previene que se envien los datos por la url
+				e.preventDefault();
+				var datos = new FormData(this);
+				//var con la url del archivo php
+				var url = "index.php";
+				//llama a la funcion ajax
+				registrarProyecto(datos, url);
+			});
+
+		}
+
+		//funcion para registrar cliente
+		function registrarProyecto(datos, url1) {
+			$.ajax({
+				data: datos,
+				url: url1,
+				type: 'POST',
+				processData: false,
+				contentType: false,
+				//esta funncion se ejecuta cuando el php a terminado de procesar
+				//con el resultado e inserta el resultado en algun elemento html
+				success: function (response) {
+					console.log(response);
+					if (response) {
+						var html = '<div class="alert alert-success" role="alert"><button type="button" class="close" data-dismiss="alert">×</button><strong>¡Bien hecho!</strong> El proyecto se ha sido registrado satisfactoriamente.</div>';
+					} else {
+						var html = '<div class="alert alert-danger" role="alert"><button type="button" class="close" data-dismiss="alert">×</button><strong>Error!</strong> El Proyecto ya se encuentra registrado.</div>';
+					}
+					$("#resultado_ajax").html(html);
+					borrarCampos();
+					//ir hacia arriba en el scrollTop
+					$('html, body').animate({ scrollTop: 0 }, 'slow');
+					//cerramos el modal
+					$('#nuevoProyecto').modal('toggle');
+					//recargamos la pagina para visualizar el nuevo cliente
+					buscarProyecto();
+				}
+			});
+
+		}
+
+	});
+
+
+	function cargarPaginacion(totalPag) {
+		//cargar la paginacion e indicarle los numero de paginas
+		var obj = $('#pagination').twbsPagination({
+			totalPages: totalPag,
+			visiblePages: 10,
+			onPageClick: function (event, pagina) {
+				cargarPorPagina(pagina);
+			}
+		});
+	}
+
+	function cargarPorPagina(pagina) {
+		$("#datos-tabla-proyecto").empty();
+		var datos = {
+			"mode": "cargar-proyecto-pagina",
+			"busqueda": stringBusqueda,
+			"pagina": pagina
+
+		};
+		$.ajax({
+			data: datos,
+			url: "index.php",
+			type: 'POST',
+			beforeSend: function () {
+				$("#loader-ajax").html("<img src='public/images/ajax-loader.gif'>Cargando...");
+			},
+			success: function (response) {
+				var html = "";
+				var array = JSON.parse(response);;
+				array.forEach(function (element) {
+					html += "<tr><td>" + element["nombre"] + "</td><td>" + element["gerente"] + "</td><td class='text-center'>" + element["fecha_registro"] + "</td><td width='10%' ><span class='pull-right'><a href='index.php?mode=riesgos&id="+element['id_proyecto']+"' class='btn btn-default'><i class='glyphicon glyphicon-edit'></i></a> <a href='#' class='btn btn-default' onclick='borrarProyecto(" + element["id_proyecto"] + ")'><i class='glyphicon glyphicon-trash'></i> </a></span></td></tr>";
+				}, this);
+				$("#datos-tabla-proyecto").html(html);
+			},
+			error: function (xhr, status, error) {
+			}
+		});
+		$("#loader-ajax").html("");
+	}
+
+
+	function buscarProyecto() {
+		stringBusqueda = $("#input-buscar").val();
+		$("#tabla-proyecto").html("");
+		var datos = {
+			"mode": "obtener-cantidad-pag-tabla-proyecto",
+			"busqueda": stringBusqueda
+
+		};
+		$.ajax({
+			data: datos,
+			url: "index.php",
+			type: 'POST',
+			beforeSend: function () {
+				$("#loader-ajax").html("<img src='public/images/ajax-loader.gif'>Cargando...");
+			},
+			success: function (response) {
+				if (response > 0) {
+					$("#tabla-proyecto").html(htmlTabla);
+					cargarPaginacion(response);
+				}
+			},
+			error: function (xhr, status, error) {
+			}
+		});
+		$("#loader-ajax").empty();
+	}
+
+	function borrarMsj() {
+		$("#resultado_ajax").html("");
+	}
+
+	function borrarCampos() {
+		$(".form-control.text").each(function () {
+			$(this).val("");
+		});
+	}
+
+	function borrarProyecto(id_proyecto) {
+		x0p('', '¿Desea borrar el proyecto?', 'warning', function (resul) {
+			if ("cancel" != resul) {
+				var datos = {
+					"mode": "borrar-proyecto",
+					"id_proyecto": id_proyecto
+
+				};
+				$.ajax({
+					data: datos,
+					url: "index.php",
+					type: 'POST',
+					success: function (response) {
+						if (response==1) {
+							x0p('Exito!',
+								'El proyecto se ha eliminado satisfactoriamente.',
+								'ok', false);
+							buscarProyecto();
+						} else {
+							x0p('Error!',
+								'No se puede eliminar el proyecto.',
+								'error', false);
+						}
+					},
+					error: function (xhr, status, error) {
+						x0p('Error!',
+							'Se ha producido un error en la aplicación por favor intelo más tarde.',
+							'error', false);
+					}
+				});
+			}
+
+		});
+
+	}
+
+</script>
